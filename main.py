@@ -1,22 +1,28 @@
+# ------------------------------------ #
+# ----- Importacion de librerias ----- #
+# ------------------------------------ #
+
 import os.path
 from sys import path
+path.append("../functions")
+from robotDevices import  *
+from directions  import *
+
+
 path.append("../classes")
+from c_imagen  import imagen_ref
+from c_victima import victima
 
 
 from re import X
 from matplotlib.contour import ContourSet
 
-from c_imagen  import imagen_ref
-from c_victima import victima
 
 
 useCV = False
 try:
     from controller import Robot  # Conexión del controlador al objeto Robot
-    import math
-    import struct
-    import time
-    import cv2
+    import math, struct, time, cv2
 
     useCV = True
     import numpy as np
@@ -27,15 +33,15 @@ except:
     print("Librerias no instaladas")
 
 
+
 # Crear un objeto de la clase robot
-robot   = Robot()
-listgps = []
-ref_c   = []
-ref_l   = []
-ref_r   = []
+listaGps           = []
+central_refference = []
+left_refference    = []
+right_refference   = []
 
 
-def enc_tipo(ind):
+def encontrar_tipo(ind):
     if   (ind <= 5):
         tip = "H"
     elif (ind <= 11):
@@ -53,8 +59,8 @@ def enc_tipo(ind):
     return tip
 
 
-def enc_color(ind):
-    #          H  H, S  S, U   U,  C   C,  P   P,  F   F,  O,  O  #
+def encontrar_color(ind):
+    # ---------- H  H, S   S,  U   U,  C   C,  P   P,  F   F,  O,  O  #
     if   ind in [0, 1, 6,  7,  12, 13, 18, 19, 24, 25, 30, 31, 36, 37]:
         col_fdo = "B"
 
@@ -75,8 +81,8 @@ for indice in range(0, 42, 1):
     else:
         archivo = '../imagenes/IMG_Blanco/C_' + str(
             indice) + '.jpg'
-    image = imagen_ref(cv2.imread(archivo), enc_tipo(indice), "C", enc_color(indice), archivo)
-    ref_c.append(image)  # imagen de referencia
+    image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "C", encontrar_color(indice), archivo)
+    central_refference.append(image)  # imagen de referencia
 
 
 # Imagen de referencia victima camara izquierda
@@ -87,8 +93,8 @@ for indice in range(0, 42, 1):
     else:
         archivo = '../imagenes/IMG_Blanco/I_' + str(
             indice) + '.jpg'
-    image = imagen_ref(cv2.imread(archivo), enc_tipo(indice), "L", enc_color(indice), archivo)
-    ref_l.append(image)  # imagen de referencia
+    image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "L", encontrar_color(indice), archivo)
+    left_refference.append(image)  # imagen de referencia
 
     
 # Imagen de referencia victima camara derecha
@@ -99,129 +105,24 @@ for indice in range(0, 42, 1):
     else:
         archivo = '../imagenes/IMG_Blanco/D_' + str(
             indice) + '.jpg'
-    image = imagen_ref(cv2.imread(archivo), enc_tipo(indice), "R", (indice), archivo)
-    ref_r.append(image)  # imagen de referenciaenc_color
-# print(ref_r[7].getImagen())
-# print(ref_r[7].getTipo())
+    image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "R", (indice), archivo)
+    right_refference.append(image)  # imagen de referenciaencontrar_color
+# print(right_refference[7].getImagen())
+# print(right_refference[7].getTipo())
 
 indice = 0
-# Definición de variables
-timeStep = 16
-# speed_max = 6.28
-speed_max = 4.5
-speed_med = 4.3
-speed_ordynary = 4
-speed_baj = 3.5
-count = 1
-step_c = 1
-step_giro = 150
-step_u = 140
-ts = 120  # 55 #79
-tg = 65  # 100
-lg = 70  # 125
-envio_m = False
-
-d_fd = 0  # distancia a la pared sensor frontal derecho
-d_fi = 0  # distancia a la pared sensor frontal izquierdo
-d_dd = 0  # distancia a la pared sensor derecho delantero
-d_dc = 0  # distancia a la pared sensor derecho central
-d_id = 0  # distancia a la pared sensor izquierdo delantero
-d_ic = 0  # distancia a la pared sensor izquierdo central
-l_fd = 1  # valor logico existe pared sensor frontal derecho
-l_fi = 1  # valor logico existe pared frontal derecho
-l_dd = 1  # valor logico existe pared sensor  derecho delantero
-l_dc = 1  # valor logico existe pared sensor  derecho central
-l_id = 1  # valor logico existe pared sensor izquierdo delantero
-l_ic = 1  # valor logico existe pared sensor izquierdo central
-inercia = 'F'  ## recuerda en que sentido se mueve el robot (F) al frente (I) izaquierda (D) derecha (U) en U
-inercia_ant = 'F'
-inaux = ""
-cont_ant = 0
-per_lect_gps = 0
-x = 0
-y = 0
-z = 0
-camG = ""
-enc_victima = ""
-tipo_victima = "N"
 dat_victima = victima("", 0, "", 0, 0)
-contGVic = 0
-vi = []  ##Vector de inercias
-lectse=25
+timeStep = 16
 
-muros = 180  ##distancia a los muros para tomar la pared
-frente = 100  ##distancia al frente para tomar la pared
-lejos = 250  ## distancia en la que los sensores no pueden sentrarse
-mas_lejos = 800  ##distancia maxima en la que los sonsores detectan algo
-media = 60  ## distancia ideal de la pared izquierda
-pantano = 1  ## multiplicador por pantano
 
-cada = 10
-cuantos = 0
-sigue = 0
-
-## definir los movimientos
-paso = 0
-count_der = 35
-count_izq = 35
-count_fte = 80
-inicio = 1  ## pasos iniciales para que no se vaya al pozo
-
-# Victimas visuales
-v_visual = False
-dif_paredes = 10
-victimTimer = 0
-contC = 0
-contA = 0
-contR = 0
-contVic = 0
+# Definición de variables
 
 ########################################
 
-# la definicion de las ruedas del robot
-rueda_rdf = robot.getDevice("wheel2 motor")
-rueda_rif = robot.getDevice("wheel1 motor")
-rueda_rdf.setPosition(float('inf'))
-rueda_rif.setPosition(float('inf'))
 
-# sensores de distancia
-sensor_fd = robot.getDevice("ps0")
-sensor_fd.enable(timeStep)
-sensor_fi = robot.getDevice("ps7")
-sensor_fi.enable(timeStep)
-sensor_dd = robot.getDevice("ps1")
-sensor_dd.enable(timeStep)
-sensor_dc = robot.getDevice("ps2")
-sensor_dc.enable(timeStep)
-sensor_id = robot.getDevice("ps6")
-sensor_id.enable(timeStep)
-sensor_ic = robot.getDevice("ps5")
-sensor_ic.enable(timeStep)
-
-# Camaras y sensor de color
-c_color = robot.getDevice("colour_sensor")
-c_color.enable(timeStep)
-camera = robot.getDevice("camera_centre")
-camera.enable(timeStep)
-camerar = robot.getDevice("camera_right")
-camerar.enable(timeStep)
-cameral = robot.getDevice("camera_left")
-cameral.enable(timeStep)
-
-## Emisor y recividor
-emitter = robot.getDevice("emitter")
-receiver = robot.getDevice("receiver")
-
-# Declara GPS
-gps = robot.getDevice("gps")
-# gps = robot.getGPS("gps")
-gps.enable(timeStep)
-lect_gps = gps.getValues()
-
-
-#######################################################################################
-#                         busqueda de victimas visuales                               #
-#######################################################################################
+# ----------------------------------------- #
+# ----- Busqueda de victimas visuales ----- #
+# ----------------------------------------- #
 
 def delay(ms):
     initTime = robot.getTime()  # Store starting time (in seconds)
@@ -231,7 +132,7 @@ def delay(ms):
 
 
 def checkVic():
-    global ref_c, ref_l, ref_r, indice, cam_enc
+    global central_refference, left_refference, right_refference, indice, cam_enc
     arch_c = '../imagenes/cen/cen' + str(indice) + '.jpg'
     arch_l = '../imagenes/izq/izq' + str(indice) + '.jpg'
     arch_r = '../imagenes/der/der' + str(indice) + '.jpg'
@@ -253,36 +154,36 @@ def checkVic():
     cam_enc = ""
     for i in range(0, 42, 1):
         # print(i)
-        resultado = cv2.matchTemplate(imag_c, ref_c[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+        resultado = cv2.matchTemplate(imag_c, central_refference[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
-        cam_im = ref_c[i].getCamara()
-        col_im = ref_c[i].getColor()
+        cam_im = central_refference[i].getCamara()
+        col_im = central_refference[i].getColor()
         if (max > max_im and cam_im == "C" and col_im != "B"):
             max_im = max
-            tip_im = ref_c[i].getTipo()
+            tip_im = central_refference[i].getTipo()
             cam_enc = "C"
 
     for i in range(0, 42, 1):
-        resultado = cv2.matchTemplate(imag_l, ref_l[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+        resultado = cv2.matchTemplate(imag_l, left_refference[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
-        cam_im = ref_l[i].getCamara()
-        col_im = ref_l[i].getColor()
+        cam_im = left_refference[i].getCamara()
+        col_im = left_refference[i].getColor()
         if (max > max_im and cam_im == "L" and col_im != "B"):
             max_im = max
-            tip_im = ref_l[i].getTipo()
+            tip_im = left_refference[i].getTipo()
             cam_enc = "L"
 
     for i in range(0, 42, 1):
-        resultado = cv2.matchTemplate(imag_r, ref_r[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+        resultado = cv2.matchTemplate(imag_r, right_refference[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
-        cam_im = ref_r[i].getCamara()
-        col_im = ref_r[i].getColor()
+        cam_im = right_refference[i].getCamara()
+        col_im = right_refference[i].getColor()
         if (max > max_im and cam_im == "R" and col_im != "B"):
             max_im = max
-            tip_im = ref_r[i].getTipo()
+            tip_im = right_refference[i].getTipo()
             cam_enc = "R"
 
     print('|maximo |', max_im, '| tipo |', tip_im, '| Camara |', cam_enc, '| Color |', col_im, '| archivo |', archivo)
@@ -334,10 +235,10 @@ def leer_camaras():
     val_ant = dat_victima.getValor()
     if (val_act < val_ant):
         if val_ant > 0.88:  ##0.69
-            enc_victima = dat_victima.getgetTipo()
+            enc_victima  = dat_victima.getgetTipo()
             tipo_victima = enc_victima
         else:
-            enc_victima = ""
+            enc_victima  = ""
             tipo_victima = ""
             dat_victima.setCamara("")
             dat_victima.setPosx(0)
@@ -345,7 +246,7 @@ def leer_camaras():
             dat_victima.setTipo("")
             dat_victima.setValor(0)
     else:
-        enc_victima = ""
+        enc_victima  = ""
         tipo_victima = ""
 
     # print("victima ", enc_victima)
@@ -394,10 +295,6 @@ def inclinacionesVictim(cam):
         contGVic = 70
     print("entre a la inclinacion", inercia)
 
-
-def spin():
-    rueda_rif.setVelocity(speed_max * 0.6)
-    rueda_rdf.setVelocity(speed_max * -0.6)
 
 
 ###############################################################################################
@@ -525,312 +422,14 @@ def lee_gps():
     if (xa == x and za == z and inercia == "F"):
         print("Estancado")
         inercia = "U"
+
+
 def guardagps():
     lectura= gps.getValues()
     print(lectura)
     x = int(lectura[0] * 1000)
     z = int(lectura[2] * 1000)
 
-
-def paro():
-    print("-------- paro ------")
-    rueda_rdf.setVelocity(0)
-    rueda_rif.setVelocity(0)
-
-
-# sigue de frente
-def adelante():
-    global inercia
-    inercia = 'F'
-    # print("adelante------")
-
-    diferencia = d_id - d_ic
-    # Si el robot esta centrado con ic
-    if (diferencia >= 50 and diferencia <= 70):
-        # y id es correcto seguimos de frente normal
-        rueda_rdf.setVelocity(speed_ordynary)
-        rueda_rif.setVelocity(speed_ordynary)
-        # print("sin ajuste")
-    elif (diferencia < 50):
-        rueda_rdf.setVelocity(speed_ordynary)
-        rueda_rif.setVelocity(speed_max)
-        # print("ajuste a la derecha")
-    elif (diferencia > 70):
-        rueda_rdf.setVelocity(speed_max)
-        rueda_rif.setVelocity(speed_ordynary)
-        # print("ajuste a la izquierda")
-
-
-def salir():
-    global inercia
-    global count
-    # print("salir ------", count)
-    rueda_rdf.setVelocity(speed_ordynary)
-    rueda_rif.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
-
-def entrar_izq():
-    global inercia
-    global count
-    inercia = 'ez'
-    # print("Terminar de salir ------", count)
-    rueda_rdf.setVelocity(speed_ordynary)
-    rueda_rif.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
-
-def entrar_der():
-    global inercia
-    global count
-    inercia = 'ed'
-    # print("Terminar de salir ------", count)
-    rueda_rdf.setVelocity(speed_ordynary)
-    rueda_rif.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
-
-def term_salir():
-    global inercia
-    global count
-    inercia = 'TS'
-    # print("Terminar de salir ------", count)
-    rueda_rdf.setVelocity(speed_ordynary)
-    rueda_rif.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
-
-
-def izquierda():
-    global count
-    global inercia
-    inercia = 'I'
-    rueda_rdf.setVelocity(speed_ordynary)
-    rueda_rif.setVelocity(speed_ordynary * -1)
-    count = count + (1 / pantano)
-
-
-def derecha():
-    global count
-    global inercia
-    inercia = 'D'
-    rueda_rdf.setVelocity(speed_ordynary * -1)
-    rueda_rif.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
-
-
-# vuelta a la derecha
-def giro_u():
-    global inercia
-    global inercia_ant
-    global count
-    global sigue
-    global termina
-    global ts
-    ts = 140
-    inercia = "U"
-    count = count + (1 / pantano)
-    if (count <= tg):
-        print("Inicia el Giro ", count, "tg ", tg)
-        rueda_rdf.setVelocity(speed_ordynary)
-        rueda_rif.setVelocity(speed_ordynary * -1)
-    elif (d_fi >= d_fd - 100 and count <= lg):
-        print("Termina el giro ", count, "lg ", lg, "Diferencia ", d_fi-d_fd)
-        rueda_rdf.setVelocity(speed_ordynary)
-        rueda_rif.setVelocity(speed_ordynary * -1)
-    elif (count <= ts and inercia_ant != 'R'):
-        print("Salir ", count," ts ", ts)
-        rueda_rdf.setVelocity(speed_ordynary)
-        rueda_rif.setVelocity(speed_ordynary)
-    else:
-        inercia_ant = 'U'
-        inercia = "F"
-        ts = 120
-        adelante()
-
-
-def sal_trampa():
-    global step_c
-    global inercia
-    global ts
-    global tg
-    global lg
-    global count
-    # Retrocede
-    rueda_rdf.setVelocity(speed_max * -1)
-    rueda_rif.setVelocity(speed_max * -1)
-    if (inercia != 'R'):
-        count = 0
-    inercia = "R"
-    count = count + (1 / pantano)
-    # print("Sailr de trampa  ", count," Pasos ",step_c)
-    if count > 15:
-        count = 0
-        inercia = "U"
-
-
-def alinear_izquierda():
-    # print("alinear a la izquierda")
-    rueda_rdf.setVelocity(speed_ordynary)
-    rueda_rif.setVelocity(speed_ordynary * -1)
-
-
-def alinear_derecha():
-    # print("alinear a la derecha")
-    rueda_rdf.setVelocity(speed_ordynary * -1)
-    rueda_rif.setVelocity(speed_ordynary)
-
-
-def ajustar():
-    ajustar = False
-    if (d_fd != 0):
-        multiplo = d_fi / d_fd
-        if (multiplo < 0.8 and l_fi == 1 and l_fd == 1 and l_ic == 1 and l_id == 1 and l_dc == 1 and l_dd == 1):
-            # paro()
-            print("Estoy pedrido me alineo a la izquierda",multiplo)
-            alinear_izquierda()
-            ajustar = True
-        elif (multiplo > 1.2 and l_fi == 1 and l_fd == 1 and l_ic == 1 and l_id == 1 and l_dc == 1 and l_dd == 1):
-            # paro()
-            print("Estoy perdido me alineo a la derecha",multiplo)
-            alinear_izquierda()
-            # alinear_derecha()
-            ajustar = True
-    return ajustar
-
-
-def direccion():
-    global inercia
-    global inercia_ant
-    global sigue
-    global step_c
-    global count
-    ins = 2
-    print("--------------",inercia, "anterior ", inercia_ant)
-    print(l_fd,l_fi)
-    ## no hay paredes al frente
-    if (inercia == 'F'):
-        if (ajustar() == False):
-            # no hay pared al frente y hay pared a la izquierda
-            if (l_fd == 1 and l_fi == 1 and (l_id == 0 or l_ic == 0)):
-                adelante()
-            elif ((l_fd == 0 and l_fi == 0) and (l_dc == 1 or l_dd==1)):
-                step_c = 40
-                count = 0
-                entrar_der()
-            # Hay pared al frente y no hay pared a la izquierda(or o and)
-            elif ((l_fd == 0 and l_fi == 0) and (l_id == 1 or l_ic == 1)):
-                step_c = 40
-                count = 0
-                entrar_izq()
-            # No hay pared al frente y no hay pared a la izquierda
-            elif ((l_fd == 1 and l_fi == 1) and (l_id == 1 or l_ic == 1)):
-                if (inercia_ant == 'U'):
-                    step_c = 40
-                    count = 0
-                    entrar_izq()
-                else:
-                    step_c = 50
-                    count = 0
-                    inercia = 'SI'
-                    salir()
-            elif (l_fd == 0 and l_fi == 0 and l_id == 0 and l_ic == 0 and l_dd == 0 and l_dc == 0):
-                step_c = 35
-                count = 0
-                giro_u()
-            else:
-                adelante()
-    elif inercia == 'ez':
-        print('entrando ala izquierda', count)
-        entrar_izq()
-        if count>step_c:
-            inercia_ant='ez'
-            step_c = 35
-            count = 0
-            izquierda()
-    elif inercia == 'ed':
-        print('entrando ala derecha', count)
-        entrar_der()
-        if count>step_c:
-            inercia_ant= 'ed'
-            step_c = 35
-            count = 0
-            derecha()
-    elif inercia == 'S':
-        salir()
-        # print("Salir", count)
-        if (count > step_c or l_fd == 0 or l_fi == 0):
-            inercia_ant = 'S'
-            inercia = "F"
-            adelante()
-    elif inercia == 'D':
-        derecha()
-        # print("Derecha", count)
-        if (count > step_c):
-            inercia_ant = 'D'
-            step_c = 40
-            count = 0
-            term_salir()
-    elif inercia == 'I':
-        # print("aqui")
-        izquierda()
-        print("Izquierda", count)
-        if (count > step_c):
-            inercia_ant = 'I'
-            step_c = 40
-            count = 0
-            term_salir()
-    elif inercia == 'SI':
-        inercia_ant = 'SI'
-        if (count < step_c):
-            salir()
-        else:
-            step_c = 35
-            count = 0
-            izquierda()
-    elif inercia == "R":
-        inercia_ant = 'R'
-        sal_trampa()
-    elif inercia == "DT":
-        derecha()
-        # print("Salir de derecha trampa", count)
-        if (count > step_c):
-            inercia_ant = 'DT'
-            step_c = 40
-            count = 0
-            term_salir()
-    elif inercia == "IT":
-        izquierda()
-        # print("Salir de izquierda trampa", count)
-        if (count > step_c):
-            inercia_ant = 'IT'
-            step_c = 40
-            count = 0
-            term_salir()
-    elif inercia == "TS":
-        term_salir()
-        # print("Terminar de salir", count)
-        if (count > step_c or l_fd == 0 or l_fi == 0):
-            inercia_ant = 'TS'
-            step_c = 0
-            count = 0
-            adelante()
-    elif inercia == 'U':
-        print("U")
-        giro_u()
-    elif inercia == "VI":
-        print("acercar a victima_L")
-        rueda_rdf.setVelocity(speed_ordynary)
-        rueda_rif.setVelocity(speed_baj)
-    elif inercia == "VD":
-        print("acercar a victima_R")
-        rueda_rif.setVelocity(speed_ordynary)
-        rueda_rdf.setVelocity(speed_baj)
-    elif inercia == "VIG":
-        rueda_rdf.setVelocity(speed_max)
-        rueda_rif.setVelocity(speed_baj)
-    elif inercia == "VDG":
-        rueda_rif.setVelocity(speed_max)
-        rueda_rdf.setVelocity(speed_baj)
-    elif inercia == "VC":
-        rueda_rif.setVelocity(speed_ordynary)
-        rueda_rdf.setVelocity(speed_ordynary)
 
 
 ## Programa principal (main)
@@ -857,7 +456,7 @@ while robot.step(timeStep) != -1:
             report()
             inercia = "F"
             print("inercia al salir de reporte ", inercia)
-            contVic = 0
+            contVic  = 0
             contGVic = 0
             camG = ""
         else:

@@ -1,29 +1,32 @@
 class victima:
+
     ## definicion de las propiedades de la clase y asignación de valores por omisión
-    def __init__(self, ti, va, ca, px, pz):
-        self.tipo = ti
-        self.valor = va
-        self.camara = ca
-        self.posx = px
-        self.posz = pz
+    def __init__(self, tipo, valor, camara, posX, posZ):
+        self.tipo   = tipo
+        self.valor  = valor
+        self.camara = camara
+        self.posx   = posX
+        self.posz   = posZ
 
-    ## Definición de metodos de asignación para las propiedades de la clase
-    def setTipo(self, ti):
-        self.tipo = ti
 
-    def setValor(self, va):
-        self.valor = va
+    # Definición de metodos de asignación para las propiedades de la clase
+    def setTipo  (self, tipo):
+        self.tipo     = tipo
 
-    def setCamara(self, ca):
-        self.camara = ca
+    def setValor (self, valor):
+        self.valor    = valor
 
-    def setPosx(self, px):
-        self.posx = px
+    def setCamara(self, camara):
+        self.camara   = camara
 
-    def setPosz(self, pz):
-        self.posz = pz
+    def setPosx  (self, posX):
+        self.posx     = posX
 
-    ##definción del metodo que ejecuta la operación y guarda la operación y resultado a la memoria
+    def setPosz  (self, posZ):
+        self.posz     = posZ
+
+
+    # Definción del metodo que ejecuta la operación y guarda la operación y resultado a la memoria
     def getgetTipo(self):
         return self.tipo
 
@@ -34,7 +37,7 @@ class victima:
         return self.camara
 
     def getPosx(self):
-        return self.posx
+        return self.posX
 
     def getPosz(self):
-        return self.posz
+        return self.posZ

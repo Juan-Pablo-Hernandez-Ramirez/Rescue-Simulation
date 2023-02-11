@@ -1,29 +1,32 @@
 class imagen_ref:
+
     ## definicion de las propiedades de la clase y asignación de valores por omisión
-    def __init__(self, im, ti, ca, co, no):
-        self.imagen = im
-        self.tipo = ti
-        self.camara = ca
-        self.color = co
-        self.nomim = no
+    def __init__(self, imagen, tipo, camara, color, nominacion):
+        self.imagen = imagen
+        self.tipo   = tipo
+        self.camara = camara
+        self.color  = color
+        self.nomim  = nominacion
 
-    ## Definición de metodos de asignación para las propiedades de la clase
-    def setNombre(self, im):
-        self.imagen = im
 
-    def setTipo(self, ti):
-        self.tipo = ti
+    # Definición de metodos de asignación para las propiedades de la clase
+    def setNombre(self, imagen):
+        self.imagen   = imagen
 
-    def setCamara(self, ca):
-        self.camara = ca
+    def setTipo  (self, tipo):
+        self.tipo     = tipo
 
-    def setColor(self, co):
-        self.color = co
+    def setCamara(self, camara):
+        self.camara   = camara
 
-    def setNomim(self, no):
-        self.nomim = no
+    def setColor (self, color):
+        self.color    = color
 
-    ##definción del metodo que ejecuta la operación y guarda la operación y resultado a la memoria
+    def setNomim (self, nominacion):
+        self.nomim    = nominacion
+
+
+    # Definción del metodo que ejecuta la operación y guarda la operación y resultado a la memoria
     def getImagen(self):
         return self.imagen
 
@@ -37,4 +40,4 @@ class imagen_ref:
         return self.color
 
     def getNomim(self):
-        return self.nomim
+        return self.nominacion

@@ -1,43 +1,64 @@
 from controller import Robot
-robot = Robot()
 
 
+robot = Robot() # Creacion de un objeto robot de la clase robot
 
 
+# ------------------------- #
+# - Velocidades del robot - #
+# ------------------------- #
 
 timeStep = 16
 # speed_max = 6.28
-speed_max = 4.5
-speed_med = 4.3
-speed_ordynary = 4
-speed_baj = 3.5
+speed_max = 4.5    # Velocidad maxima del robot
+speed_med = 4.3    # Velocidad
+speed_ordynary = 4 # 
+speed_baj = 3.5    # Velocidad baja del robot
+
+
+# ------------------- #
+# - Pasos del robot - #
+# ------------------- #
+
 count = 1
 step_c = 1
 step_giro = 150
 step_u = 140
-ts = 120  # 55 #79
+ts = 120 # 55 #79
 tg = 65  # 100
 lg = 70  # 125
 envio_m = False
 
-d_fd = 0  # Distancia a la pared sensor frontal derecho
-d_fi = 0  # Distancia a la pared sensor frontal izquierdo
-d_dd = 0  # Distancia a la pared sensor derecho delantero
-d_dc = 0  # Distancia a la pared sensor derecho central
-d_id = 0  # Distancia a la pared sensor izquierdo delantero
-d_ic = 0  # Distancia a la pared sensor izquierdo central
 
-l_fd = 1  # Valor logico existe pared sensor frontal derecho
-l_fi = 1  # Valor logico existe pared frontal derecho
-l_dd = 1  # Valor logico existe pared sensor  derecho delantero
-l_dc = 1  # Valor logico existe pared sensor  derecho central
-l_id = 1  # Valor logico existe pared sensor izquierdo delantero
-l_ic = 1  # Valor logico existe pared sensor izquierdo central
+# ------------------------------ #
+# - Distancias de los sensores - #
+# ------------------------------ #
 
-inercia = 'F'  # recuerda en que sentido se mueve el robot (F) al frente (I) izaquierda (D) derecha (U) en U
-inercia_ant = 'F'
-inaux = ""
-cont_ant = 0
+# Se lee la distancia de los sensores hacia las paredes
+d_frontalDerecha     = 0 # Distancia de los sensores hacia la pared
+d_frontalIzquierda   = 0
+d_delanteraDerecha   = 0
+d_centralDerecha     = 0
+d_delanteraIzquierda = 0
+d_centralizquierda   = 0
+
+
+# Valores logicos que se utilizan para convertir la distancia a un numero binario
+l_frontalDerecho     = 1  # Valor logico existe pared sensor frontal derecho
+l_frontalIzquierdo   = 1
+l_delanteroDerecho   = 1
+l_delanteroIzquierdo = 1
+l_centralDerecho     = 1
+l_centralIzquierdo   = 1
+
+inercia = 'F'   # Guarda la direccion en la que se esta moviendo el robot
+                # (F) Frente
+                # (I) Izquierda
+                # (D) Derecha
+                # (U) Girando en U
+
+
+inercia_ant = 'F' # Guarda la distancia previa en la que se movio el robot
 per_lect_gps = 0
 x = 0
 y = 0

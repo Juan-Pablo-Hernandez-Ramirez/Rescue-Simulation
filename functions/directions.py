@@ -14,7 +14,7 @@ def adelante():
     inercia = 'F'
     # print("adelante------")
 
-    diferencia = d_id - d_ic
+    diferencia = d_delanteraIzquierda - d_centralizquierda
     # Si el robot esta centrado con ic
     if (diferencia >= 50 and diferencia <= 70):
         # y id es correcto seguimos de frente normal
@@ -103,8 +103,8 @@ def giro_u():
         print("Inicia el Giro ", count, "tg ", tg)
         rueda_rdf.setVelocity(speed_ordynary)
         rueda_rif.setVelocity(speed_ordynary * -1)
-    elif (d_fi >= d_fd - 100 and count <= lg):
-        print("Termina el giro ", count, "lg ", lg, "Diferencia ", d_fi-d_fd)
+    elif (d_frontalIzquierda >= d_frontalDerecha - 100 and count <= lg):
+        print("Termina el giro ", count, "lg ", lg, "Diferencia ", d_frontalIzquierda-d_frontalDerecha)
         rueda_rdf.setVelocity(speed_ordynary)
         rueda_rif.setVelocity(speed_ordynary * -1)
     elif (count <= ts and inercia_ant != 'R'):
@@ -152,14 +152,14 @@ def alinear_derecha():
 
 def ajustar():
     ajustar = False
-    if (d_fd != 0):
-        multiplo = d_fi / d_fd
-        if (multiplo < 0.8 and l_fi == 1 and l_fd == 1 and l_ic == 1 and l_id == 1 and l_dc == 1 and l_dd == 1):
+    if (d_frontalDerecha != 0):
+        multiplo = d_frontalIzquierda / d_frontalDerecha
+        if (multiplo < 0.8 and l_frontalIzquierdo == 1 and l_frontalDerecho == 1 and l_centralIzquierdo == 1 and l_delanteroIzquierdo == 1 and l_centralDerecho == 1 and l_delanteroDerecho == 1):
             # paro()
             print("Estoy pedrido me alineo a la izquierda",multiplo)
             alinear_izquierda()
             ajustar = True
-        elif (multiplo > 1.2 and l_fi == 1 and l_fd == 1 and l_ic == 1 and l_id == 1 and l_dc == 1 and l_dd == 1):
+        elif (multiplo > 1.2 and l_frontalIzquierdo == 1 and l_frontalDerecho == 1 and l_centralIzquierdo == 1 and l_delanteroIzquierdo == 1 and l_centralDerecho == 1 and l_delanteroDerecho == 1):
             # paro()
             print("Estoy perdido me alineo a la derecha",multiplo)
             alinear_izquierda()
@@ -176,24 +176,24 @@ def direccion():
     global count
     ins = 2
     print("--------------",inercia, "anterior ", inercia_ant)
-    print(l_fd,l_fi)
+    print(l_frontalDerecho,l_frontalIzquierdo)
     ## no hay paredes al frente
     if (inercia == 'F'):
         if (ajustar() == False):
             # no hay pared al frente y hay pared a la izquierda
-            if (l_fd == 1 and l_fi == 1 and (l_id == 0 or l_ic == 0)):
+            if (l_frontalDerecho == 1 and l_frontalIzquierdo == 1 and (l_delanteroIzquierdo == 0 or l_centralIzquierdo == 0)):
                 adelante()
-            elif ((l_fd == 0 and l_fi == 0) and (l_dc == 1 or l_dd==1)):
+            elif ((l_frontalDerecho == 0 and l_frontalIzquierdo == 0) and (l_centralDerecho == 1 or l_delanteroDerecho==1)):
                 step_c = 40
                 count = 0
                 entrar_der()
             # Hay pared al frente y no hay pared a la izquierda(or o and)
-            elif ((l_fd == 0 and l_fi == 0) and (l_id == 1 or l_ic == 1)):
+            elif ((l_frontalDerecho == 0 and l_frontalIzquierdo == 0) and (l_delanteroIzquierdo == 1 or l_centralIzquierdo == 1)):
                 step_c = 40
                 count = 0
                 entrar_izq()
             # No hay pared al frente y no hay pared a la izquierda
-            elif ((l_fd == 1 and l_fi == 1) and (l_id == 1 or l_ic == 1)):
+            elif ((l_frontalDerecho == 1 and l_frontalIzquierdo == 1) and (l_delanteroIzquierdo == 1 or l_centralIzquierdo == 1)):
                 if (inercia_ant == 'U'):
                     step_c = 40
                     count = 0
@@ -203,7 +203,7 @@ def direccion():
                     count = 0
                     inercia = 'SI'
                     salir()
-            elif (l_fd == 0 and l_fi == 0 and l_id == 0 and l_ic == 0 and l_dd == 0 and l_dc == 0):
+            elif (l_frontalDerecho == 0 and l_frontalIzquierdo == 0 and l_delanteroIzquierdo == 0 and l_centralIzquierdo == 0 and l_delanteroDerecho == 0 and l_centralDerecho == 0):
                 step_c = 35
                 count = 0
                 giro_u()
@@ -228,7 +228,7 @@ def direccion():
     elif inercia == 'S':
         salir()
         # print("Salir", count)
-        if (count > step_c or l_fd == 0 or l_fi == 0):
+        if (count > step_c or l_frontalDerecho == 0 or l_frontalIzquierdo == 0):
             inercia_ant = 'S'
             inercia = "F"
             adelante()
@@ -279,7 +279,7 @@ def direccion():
     elif inercia == "TS":
         term_salir()
         # print("Terminar de salir", count)
-        if (count > step_c or l_fd == 0 or l_fi == 0):
+        if (count > step_c or l_frontalDerecho == 0 or l_frontalIzquierdo == 0):
             inercia_ant = 'TS'
             step_c = 0
             count = 0

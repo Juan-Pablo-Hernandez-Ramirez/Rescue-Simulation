@@ -16,6 +16,7 @@ from c_victima import victima
 
 path.append("../detection")
 from victimDetection import *
+from sensorReading import *
 
 path.append("../functions")
 from directions   import *
@@ -44,14 +45,7 @@ indice   = 0
 timeStep = 16
 
 
-# Definición de variables
 
-########################################
-
-
-# ----------------------------------------- #
-# ----- Busqueda de victimas visuales ----- #
-# ----------------------------------------- #
 
 def delay(ms):
     initTime = robot.getTime()  # Store starting time (in seconds)
@@ -94,85 +88,6 @@ def report():
 
 
 ###############################################################################################
-
-# Procedimiento de lectura de sensores de distancia
-def lee_distancia():
-    global d_fd
-    global d_fi
-    global d_dd
-    global d_dc
-    global d_id
-    global d_ic
-    global l_fd
-    global l_fi
-    global l_dd
-    global l_dc
-    global l_id
-    global l_ic
-
-    d_fd = int(sensor_fd.getValue() * 1000)
-    d_fi = int(sensor_fi.getValue() * 1000)
-    d_dd = int(sensor_dd.getValue() * 1000)
-    d_dc = int(sensor_dc.getValue() * 1000)
-    d_id = int(sensor_id.getValue() * 1000)
-    d_ic = int(sensor_ic.getValue() * 1000)
-
-    if (d_ic > 500 and d_id < frente):
-        print("estoy pagado a la pared izquierda")
-        d_ic = 0
-
-    if (d_dc > 500 and d_dd < frente):
-        print("estoy pagado a la pared derecha")
-        d_dc = 0
-
-    '''if (d_fd>600 and d_fi>600 and (d_dd<frente or d_id<frente)):
-        print("estoy pagado a la pared frontal a la derecha")
-        d_fd=0
-        d_fi=0'''
-
-    if (d_fd > 600 and d_dd < frente):
-        print("estoy pagado a la pared frontal a la derecha")
-        d_fd = 0
-
-    if (d_fi > 600 and d_id < frente):
-        print("estoy pagado a la pared frontal a la izquierda")
-        d_fi = 0
-
-    ## logicos al frente
-    if (d_fd > frente):
-        l_fd = 1  ## no hay pared al frente
-    else:
-        l_fd = 0  ## hay pared al frente
-
-    if (d_fi > frente):
-        l_fi = 1  ## no hay pared al frente
-    else:
-        l_fi = 0  ## hay pared al frente
-
-    ## logicos a las paredes
-    if (d_dd > muros):
-        l_dd = 1  ## no hay pared a la derecha
-    else:
-        l_dd = 0  ## hay pared a la derecha
-
-    if (d_dc > muros):
-        l_dc = 1  ## no hay pared a la derecha
-    else:
-        l_dc = 0  ## hay pared a la derecha
-
-    if (d_id > muros):
-        l_id = 1  ## no hay pared a la izquierda
-    else:
-        l_id = 0  ## hay pared a la izquierda
-
-    if (d_ic > muros):
-        l_ic = 1  ## no hay pared a la izquierda
-    else:
-        l_ic = 0  ## hay pared a la izquierda
-
-    # print('distancia fd ', d_fd,'  fi ', d_fi,' derecha delantero ',d_dd,' derecha central ',d_dc," izquierda delantero ",d_id," izquierda central ",d_ic)
-    print('logica fd ', l_fd,'  fi ', l_fi,' derecha delantero ',l_dd,' derecha central ',l_dc," izquierda delantero ",l_id," izquierda central ",l_ic)
-
 
 # Lectura del color del piso
 def prueba_color():

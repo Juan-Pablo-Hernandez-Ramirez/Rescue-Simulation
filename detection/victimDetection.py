@@ -2,8 +2,6 @@ import cv2
 from sys import path
 
 
-
-
 path.append("../detection")
 from victimDetection import *
 
@@ -22,36 +20,10 @@ right_refference   = []
 dat_victima = victima("", 0, "", 0, 0)
 
 
-def encontrar_tipo(ind):
-    if   (ind <= 5):
-        tip = "H"
-    elif (ind <= 11):
-        tip = "S"
-    elif (ind <= 17):
-        tip = "U"
-    elif (ind <= 23):
-        tip = "C"
-    elif (ind <= 29):
-        tip = "P"
-    elif (ind <= 35):
-        tip = "F"
-    elif (ind <= 41):
-        tip = "O"
-    return tip
 
-
-def encontrar_color(ind):
-    # ---------- H  H, S   S,  U   U,  C   C,  P   P,  F   F,  O,  O  #
-    if   ind in [0, 1, 6,  7,  12, 13, 18, 19, 24, 25, 30, 31, 36, 37]:
-        col_fdo = "B"
-
-    elif ind in [2, 3, 8,  9,  14, 15, 20, 21, 26, 27, 32, 33, 38, 39]:
-        col_fdo = "N"
-
-    elif ind in [4, 5, 10, 11, 16, 17, 22, 23, 28, 29, 34, 35, 40, 41]:
-        col_fdo = "V"
-        
-    return col_fdo
+# ----------------------------------------- #
+# ----- Busqueda de victimas visuales ----- #
+# ----------------------------------------- #
 
 
 # Imagen de referencia victimas camara central
@@ -93,7 +65,36 @@ for indice in range(0, 42, 1):
 
 
 
+def encontrar_tipo(ind):
+    if   (ind <= 5):
+        tip = "H"
+    elif (ind <= 11):
+        tip = "S"
+    elif (ind <= 17):
+        tip = "U"
+    elif (ind <= 23):
+        tip = "C"
+    elif (ind <= 29):
+        tip = "P"
+    elif (ind <= 35):
+        tip = "F"
+    elif (ind <= 41):
+        tip = "O"
+    return tip
 
+
+def encontrar_color(ind):
+    # ---------- H  H, S   S,  U   U,  C   C,  P   P,  F   F,  O,  O  #
+    if   ind in [0, 1, 6,  7,  12, 13, 18, 19, 24, 25, 30, 31, 36, 37]:
+        col_frontalDerechoo = "B"
+
+    elif ind in [2, 3, 8,  9,  14, 15, 20, 21, 26, 27, 32, 33, 38, 39]:
+        col_frontalDerechoo = "N"
+
+    elif ind in [4, 5, 10, 11, 16, 17, 22, 23, 28, 29, 34, 35, 40, 41]:
+        col_frontalDerechoo = "V"
+        
+    return col_frontalDerechoo
 
 
 def checkVic():
@@ -165,8 +166,6 @@ def checkVic():
 
 
 
-
-
 def leer_camaras():
     global enc_victima
     global tipo_victima
@@ -198,35 +197,35 @@ def inclinacionesVictim(cam):
         camG = cam
 
     if (camG == "L"):
-        if (camG == "L" and l_ic == 0 and l_fi == 0):
+        if (camG == "L" and l_centralIzquierdo == 0 and l_frontalIzquierdo == 0):
             print("Opcion 1_L")
             inercia = "VIG"
             contGVic = 10
-        elif (camG == "L" and l_ic == 0 and l_fi == 1):
+        elif (camG == "L" and l_centralIzquierdo == 0 and l_frontalIzquierdo == 1):
             print("Opcion 2_L")
             inercia = "VI"
             contGVic = 50
-        elif (camG == "L" and (l_id == 1 or l_fi == 1)):
+        elif (camG == "L" and (l_delanteroIzquierdo == 1 or l_frontalIzquierdo == 1)):
             print("Opcion 3_L")
             inercia = "F"
             contGVic = 60
 
     elif (camG == "R"):
-        if (camG == "R" and l_dc == 0 and l_fd == 0):
+        if (camG == "R" and l_centralDerecho == 0 and l_frontalDerecho == 0):
             print("Opcion 1_R")
             inercia = "VDG"
             contGVic = 10
-        elif (camG == "D" and l_dc == 0 and l_fd == 1):
+        elif (camG == "D" and l_centralDerecho == 0 and l_frontalDerecho == 1):
             print("Opcion 2_R")
             inercia = "VD"
             contGVic = 50
-        elif (camG == "R" and (l_dd == 1 or l_fd == 1)):
+        elif (camG == "R" and (l_delanteroDerecho == 1 or l_frontalDerecho == 1)):
             print("Opcion 3_R")
             inercia = "F"
             contGVic = 60
 
     elif (camG == "C"):
-        if (camG == "C" and l_fd == 1 and l_fi == 1):
+        if (camG == "C" and l_frontalDerecho == 1 and l_frontalIzquierdo == 1):
             print("Opcion 1_C")
             inercia = "VC"
             contGVic = 40

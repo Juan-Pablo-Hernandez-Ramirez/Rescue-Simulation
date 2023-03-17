@@ -117,12 +117,12 @@ sensorCentralDerecho.enable(timeStep)
 # Camaras y sensor de color
 c_color = robot.getDevice("colour_sensor")
 c_color.enable(timeStep)
-camera = robot.getDevice("camera_centre")
-camera.enable(timeStep)
-camerar = robot.getDevice("camera_right")
-camerar.enable(timeStep)
-cameral = robot.getDevice("camera_left")
-cameral.enable(timeStep)
+camaraCentral = robot.getDevice("camera_centre")
+camaraCentral.enable(timeStep)
+camaraDerecha = robot.getDevice("camera_right")
+camaraDerecha.enable(timeStep)
+camaraIzquierda = robot.getDevice("camera_left")
+camaraIzquierda.enable(timeStep)
 
 ## Emisor y recividor
 emitter = robot.getDevice("emitter")

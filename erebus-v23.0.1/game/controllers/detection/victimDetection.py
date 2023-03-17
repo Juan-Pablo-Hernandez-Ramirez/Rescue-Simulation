@@ -13,9 +13,10 @@ path.append("../functions")
 from robotDevices import *
  
 
-left_refference    = []
-central_refference = []
-right_refference   = []
+referencia_izquierda = []
+referencia_central   = []
+referencia_derecha   = []
+referencia_victimas  = []
 
 dat_victima = victima("", 0, "", 0, 0)
 
@@ -61,72 +62,6 @@ def encontrar_tipo(ind):
     elif (ind <= 41):
         tip = "O"
     return tip
-
-
-def checkVic():
-    global central_refference, left_refference, right_refference, indice, cam_enc
-    arch_c = '../imagenes/cen/cen' + str(indice) + '.jpg'
-    arch_l = '../imagenes/izq/izq' + str(indice) + '.jpg'
-    arch_r = '../imagenes/der/der' + str(indice) + '.jpg'
-    print(archivo)
-    camera.saveImage(arch_c, 100)  # graba la imagen de la camara
-    imag_c = cv2.imread(arch_c)  # imagen que ve el robot
-    cameral.saveImage(arch_l, 100)  # graba la imagen de la camara
-    imag_l = cv2.imread(arch_l)  # imagen que ve el robot
-    camerar.saveImage(arch_r, 100)  # graba la imagen de la camara
-    imag_r = cv2.imread(arch_r)  # imagen que ve el robot
-    #indice = indice + 1
-    posX = int(gps.getValues()[0] * 100)
-    posZ = int(gps.getValues()[2] * 100)
-    max_im = 0
-    tip_im = ""
-    reg_im = ""
-    cam_im = ""
-    col_im = ""
-    cam_enc = ""
-    for i in range(0, 42, 1):
-        # print(i)
-        resultado = cv2.matchTemplate(imag_c, central_refference[i].getImagen(), cv2.TM_CCOEFF_NORMED)
-        min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
-        # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
-        cam_im = central_refference[i].getCamara()
-        col_im = central_refference[i].getColor()
-        if (max > max_im and cam_im == "C" and col_im != "B"):
-            max_im = max
-            tip_im = central_refference[i].getTipo()
-            cam_enc = "C"
-
-    for i in range(0, 42, 1):
-        resultado = cv2.matchTemplate(imag_l, left_refference[i].getImagen(), cv2.TM_CCOEFF_NORMED)
-        min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
-        # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
-        cam_im = left_refference[i].getCamara()
-        col_im = left_refference[i].getColor()
-        if (max > max_im and cam_im == "L" and col_im != "B"):
-            max_im = max
-            tip_im = left_refference[i].getTipo()
-            cam_enc = "L"
-
-    for i in range(0, 42, 1):
-        resultado = cv2.matchTemplate(imag_r, right_refference[i].getImagen(), cv2.TM_CCOEFF_NORMED)
-        min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
-        # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
-        cam_im = right_refference[i].getCamara()
-        col_im = right_refference[i].getColor()
-        if (max > max_im and cam_im == "R" and col_im != "B"):
-            max_im = max
-            tip_im = right_refference[i].getTipo()
-            cam_enc = "R"
-
-    print('|maximo |', max_im, '| tipo |', tip_im, '| Camara |', cam_enc, '| Color |', col_im, '| archivo |', archivo)
-
-    if (max_im > dat_victima.getValor()):
-        dat_victima.setCamara(cam_im)
-        dat_victima.setTipo(tip_im)
-        dat_victima.setValor(max_im)
-        dat_victima.setPosx(posX)
-        dat_victima.setPosz(posZ)
-    return max_im
 
 
 def inclinacionesVictim(cam):
@@ -176,52 +111,147 @@ def inclinacionesVictim(cam):
 def encontrar_color(ind):
     # ---------- H  H, S   S,  U   U,  C   C,  P   P,  F   F,  O,  O  #
     if   ind in [0, 1, 6,  7,  12, 13, 18, 19, 24, 25, 30, 31, 36, 37]:
-        col_frontalDerechoo = "B"
+        col_frontalDerecho = "B"
 
     elif ind in [2, 3, 8,  9,  14, 15, 20, 21, 26, 27, 32, 33, 38, 39]:
-        col_frontalDerechoo = "N"
+        col_frontalDerecho = "N"
 
     elif ind in [4, 5, 10, 11, 16, 17, 22, 23, 28, 29, 34, 35, 40, 41]:
-        col_frontalDerechoo = "V"
+        col_frontalDerecho = "V"
         
-    return col_frontalDerechoo
+    return col_frontalDerecho
+
+
+def checkVic():
+    global referencia_victimas, referencia_central, referencia_izquierda, referencia_derecha
+    global indice, cam_enc
+    arch_c = '../imagenes/cen/cen' + str(indice) + '.jpg'
+    arch_l = '../imagenes/izq/izq' + str(indice) + '.jpg'
+    arch_r = '../imagenes/der/der' + str(indice) + '.jpg'
+    print(archivo)
+    camaraCentral.saveImage(arch_c, 100)  # graba la imagen de la camara
+    imagenCentral = cv2.imread(arch_c)  # imagen que ve el robot
+    camaraIzquierda.saveImage(arch_l, 100)  # graba la imagen de la camara
+    imagenIzquierda = cv2.imread(arch_l)  # imagen que ve el robot
+    camaraDerecha.saveImage(arch_r, 100)  # graba la imagen de la camara
+    imagenDerecha = cv2.imread(arch_r)  # imagen que ve el robot
+    #indice = indice + 1
+    posX = int(gps.getValues()[0] * 100)
+    posZ = int(gps.getValues()[2] * 100)
+    max_im = 0
+    tip_im = ""
+    reg_im = ""
+    cam_im = ""
+    col_im = ""
+    cam_enc = ""
+
+
+    for i in range(0, 2, 1):
+        # print(i)
+        resultado = cv2.matchTemplate(imagenCentral, referencia_victimas[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+        min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
+        cam_im = referencia_victimas[i].getCamara()
+        col_im = referencia_victimas[i].getColor()
+        if (max > max_im and cam_im == "C" and col_im != "B"):
+            victimaEncontrada = True
+
+        resultado = cv2.matchTemplate(imagenIzquierda, referencia_victimas[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+        min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
+        cam_im = referencia_victimas[i].getCamara()
+        col_im = referencia_victimas[i].getColor()
+        if (max > max_im and cam_im == "I" and col_im != "B"):
+            victimaEncontrada = True
+
+        resultado = cv2.matchTemplate(imagenDerecha, referencia_victimas[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+        min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
+        cam_im = referencia_victimas[i].getCamara()
+        col_im = referencia_victimas[i].getColor()
+        if (max > max_im and cam_im == "D" and col_im != "B"):
+            victimaEncontrada = True
+
+
+
+        if (victimaEncontrada):
+            for i in range(0, 54, 1):
+                # print(i)
+                resultado = cv2.matchTemplate(imagenCentral, referencia_central[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+                min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
+                # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
+                cam_im = referencia_central[i].getCamara()
+                col_im = referencia_central[i].getColor()
+                if (max > max_im and cam_im == "C" and col_im != "B"):
+                    max_im = max
+                    tip_im = referencia_central[i].getTipo()
+                    cam_enc = "C"
+
+            for i in range(0, 54, 1):
+                resultado = cv2.matchTemplate(imagenIzquierda, referencia_izquierda[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+                min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
+                # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
+                cam_im = referencia_izquierda[i].getCamara()
+                col_im = referencia_izquierda[i].getColor()
+                if (max > max_im and cam_im == "L" and col_im != "B"):
+                    max_im = max
+                    tip_im = referencia_izquierda[i].getTipo()
+                    cam_enc = "L"
+
+            for i in range(0, 54, 1):
+                resultado = cv2.matchTemplate(imagenDerecha, referencia_derecha[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+                min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
+                # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
+                cam_im = referencia_derecha[i].getCamara()
+                col_im = referencia_derecha[i].getColor()
+                if (max > max_im and cam_im == "R" and col_im != "B"):
+                    max_im = max
+                    tip_im = referencia_derecha[i].getTipo()
+                    cam_enc = "R"
+
+    print('|maximo |', max_im, '| tipo |', tip_im, '| Camara |', cam_enc, '| Color |', col_im, '| archivo |', archivo)
+
+    if (max_im > dat_victima.getValor()):
+        dat_victima.setCamara(cam_im)
+        dat_victima.setTipo(tip_im)
+        dat_victima.setValor(max_im)
+        dat_victima.setPosx(posX)
+        dat_victima.setPosz(posZ)
+    return max_im
 
 
 # ------------------------- Busqueda de victimas visuales ------------------------- #
+for indice in range(0, 2, 1):
+    archivo = '../imagenes/victimas_a_distancia/victima_d' + str(indice) + '.jpg'
+    image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "V", encontrar_color(indice), archivo)
+    referencia_victimas.append(image)  # imagen de referencia
+
+
 
 # Imagen de referencia victimas camara central
-for indice in range(0, 42, 1):
+for indice in range(0, 54, 1):
     if indice <= 9:
-        archivo = '../imagenes/IMG_Blanco/C_0' + str(
-            indice) + '.jpg'
+        archivo = '../imagenes/IMG_Blanco/C_0' + str(indice) + '.jpg'
     else:
-        archivo = '../imagenes/IMG_Blanco/C_' + str(
-            indice) + '.jpg'
+        archivo = '../imagenes/IMG_Blanco/C_' + str(indice) + '.jpg'
     image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "C", encontrar_color(indice), archivo)
-    central_refference.append(image)  # imagen de referencia
+    referencia_central.append(image)  # imagen de referencia
 
 
 # Imagen de referencia victima camara izquierda
-for indice in range(0, 42, 1):
+for indice in range(0, 54, 1):
     if indice <= 9:
-        archivo = '../imagenes/IMG_Blanco/I_0' + str(
-            indice) + '.jpg'
+        archivo = '../imagenes/IMG_Blanco/I_0' + str(indice) + '.jpg'
     else:
-        archivo = '../imagenes/IMG_Blanco/I_' + str(
-            indice) + '.jpg'
+        archivo = '../imagenes/IMG_Blanco/I_' + str(indice) + '.jpg'
     image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "L", encontrar_color(indice), archivo)
-    left_refference.append(image)  # imagen de referencia
+    referencia_izquierda.append(image)  # imagen de referencia
 
     
 # Imagen de referencia victima camara derecha
-for indice in range(0, 42, 1):
+for indice in range(0, 54, 1):
     if indice <= 9:
-        archivo = '../imagenes/IMG_Blanco/D_0' + str(
-            indice) + '.jpg'
+        archivo = '../imagenes/IMG_Blanco/D_0' + str(indice) + '.jpg'
     else:
-        archivo = '../imagenes/IMG_Blanco/D_' + str(
-            indice) + '.jpg'
+        archivo = '../imagenes/IMG_Blanco/D_' + str(indice) + '.jpg'
     image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "R", (indice), archivo)
-    right_refference.append(image)  # imagen de referenciaencontrar_color
-# print(right_refference[7].getImagen())
-# print(right_refference[7].getTipo())
+    referencia_derecha.append(image)  # imagen de referenciaencontrar_color
+# print(referencia_derecha[7].getImagen())
+# print(referencia_derecha[7].getTipo())

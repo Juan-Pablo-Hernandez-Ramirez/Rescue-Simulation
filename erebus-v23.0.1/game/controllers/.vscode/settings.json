@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [
+        "./classes",
+        "./classes",
+        "./detection",
+        "./functions"
+    ]
+}

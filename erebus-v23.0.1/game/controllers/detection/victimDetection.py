@@ -158,18 +158,18 @@ def checkVic():
 
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultadoIzquierdo)
         if (max > max_im and cam_im == "I" and col_im != "B"):
-            victimaIzquierdaEncontrada = True
+            victimaEncontrada = "I"
 
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultadoCentral)
         if (max > max_im and cam_im == "C" and col_im != "B"):
-            victimaCentralEncontrada = True
+            victimaEncontrada = "C"
 
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultadoDerecho)
         if (max > max_im and cam_im == "D" and col_im != "B"):
-            victimaDerechaEncontrada = True
+            victimaEncontrada = "D"
 
 
-        if(victimaIzquierdaEncontrada):
+        if(victimaEncontrada == "I"):
             for i in range(0, 54, 1):
                 resultado = cv2.matchTemplate(imagenIzquierda, referencia_izquierda[i].getImagen(), cv2.TM_CCOEFF_NORMED)
                 min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
@@ -181,7 +181,7 @@ def checkVic():
                     tip_im = referencia_izquierda[i].getTipo()
                     cam_enc = "L"
 
-        elif(victimaCentralEncontrada):
+        elif(victimaEncontrada == "C"):
             for i in range(0,54,1):
                 resultado = cv2.matchTemplate(imagenCentral, referencia_central[i].getImagen(), cv2.TM_CCOEFF_NORMED)
                 min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
@@ -193,7 +193,7 @@ def checkVic():
                     tip_im = referencia_central[i].getTipo()
                     cam_enc = "C"
 
-        elif(victimaDerechaEncontrada):
+        elif(victimaEncontrada == "D"):
             for i in range(0, 54, 1):
                 resultado = cv2.matchTemplate(imagenDerecha, referencia_derecha[i].getImagen(), cv2.TM_CCOEFF_NORMED)
                 min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)

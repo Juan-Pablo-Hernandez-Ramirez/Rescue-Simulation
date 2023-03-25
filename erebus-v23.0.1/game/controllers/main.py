@@ -38,7 +38,6 @@ except:
 
 
 # Crear un objeto de la clase robot
-listaGp  = []
 indice   = 0
 timeStep = 16
 
@@ -60,8 +59,8 @@ def report():
         # print("Termina espera...")
         # victimType = bytes('H', "utf-8")
         victimType = bytes(enc_victima, "utf-8")
-        posX = dat_victima.getPosx()
-        posZ = dat_victima.getPosz()
+        posX = dat_victima.getPosX()
+        posZ = dat_victima.getPosZ()
         message = struct.pack("i i c", posX, posZ, victimType)
         print(message)
         emitter.send(message)
@@ -71,8 +70,8 @@ def report():
         enc_victima = ""
         tipo_victima = ""
         dat_victima.setCamara("")
-        dat_victima.setPosx(0)
-        dat_victima.setPosz(0)
+        dat_victima.setPosX(0)
+        dat_victima.setPosZ(0)
         dat_victima.setTipo("")
         dat_victima.setValor(0)
     else:
@@ -86,12 +85,7 @@ def report():
 
 # Lectura del color del piso
 def prueba_color():
-    global ts
-    global tg
-    global lg
-    global step_c
-    global speed_ordynary
-    global pantano
+    global ts, tg, lg, step_c, speed_ordynary, pantano
     color = c_color.getImage()
     print(color)
     speed_ordynary = 4
@@ -102,6 +96,7 @@ def prueba_color():
                  b'\x7f\xcf\xeb\xff', b'\xfe\xfe\xfe\xff', b'\x84\xd4\xef\xff', b'~\xce\xea\xff',
                  b'\x7f\xd0\xeb\xff', b'\x88\xd8\xf1\xff', b'}\xcd\xea\xff', b'\x80\xd0\xec\xff',
                  b'\x82\xd2\xed\xff']:
+
         # print("------------------------------------------------------PANTANO")
         pantano = 2
         speed_ordynary = 2
@@ -112,11 +107,7 @@ def prueba_color():
 
 
 def lee_gps():
-    global lect_gps
-    global x
-    global y
-    global z
-    global inercia
+    global lect_gps, inercia, x, y, z
     lect_gps = gps.getValues()
     print(lect_gps)
     xa = x
@@ -124,7 +115,7 @@ def lee_gps():
     x = int(lect_gps[0] * 1000)
     y = int(lect_gps[1] * 1000)
     z = int(lect_gps[2] * 1000)
-    # print("leyendo gps x-",x,"y-",y,"z-",z)
+    print("leyendo gps x-",x,"y-",y,"z-",z)
     if (xa == x and za == z and inercia == "F"):
         print("Estancado")
         inercia = "U"

@@ -40,10 +40,10 @@ class victima:
     def setCamara(self, ca):
         self.camara = ca
 
-    def setPosx(self, px):
+    def setPosX(self, px):
         self.posx = px
 
-    def setPosz(self, pz):
+    def setPosZ(self, pz):
         self.posz = pz
 
     # definción del metodo que ejecuta la operación y guarda la operación y resultado a la memoria
@@ -56,10 +56,10 @@ class victima:
     def getCamara(self):
         return self.camara
 
-    def getPosx(self):
+    def getPosX(self):
         return self.posx
 
-    def getPosz(self):
+    def getPosZ(self):
         return self.posz
 
 
@@ -261,8 +261,6 @@ count_fte = 80
 inicio = 1  # pasos iniciales para que no se vaya al pozo
 
 # Victimas visuales
-v_visual = False
-dif_paredes = 10
 victimTimer = 0
 contC = 0
 contA = 0
@@ -294,12 +292,12 @@ sensor_ic.enable(timeStep)
 # Camaras y sensor de color
 c_color = robot.getDevice("colour_sensor")
 c_color.enable(timeStep)
-camera = robot.getDevice("camera_centre")
-camera.enable(timeStep)
-camerar = robot.getDevice("camera_right")
-camerar.enable(timeStep)
-cameral = robot.getDevice("camera_left")
-cameral.enable(timeStep)
+camaraCentral = robot.getDevice("camera_centre")
+camaraCentral.enable(timeStep)
+camaraDerecha = robot.getDevice("camera_right")
+camaraDerecha.enable(timeStep)
+camaraIzquierda = robot.getDevice("camera_left")
+camaraIzquierda.enable(timeStep)
 
 # Emisor y recividor
 emitter = robot.getDevice("emitter")
@@ -326,16 +324,16 @@ def delay(ms):
 
 def checkVic():
     global ref_c, ref_l, ref_r, indice, cam_enc
-    arch_c = '../imagenes/cen/cen' + str(indice) + '.jpg'
-    arch_l = '../imagenes/izq/izq' + str(indice) + '.jpg'
-    arch_r = '../imagenes/der/der' + str(indice) + '.jpg'
+    archivoCentral = '../imagenes/cen/cen' + str(indice) + '.jpg'
+    archivoIzquierdo = '../imagenes/izq/izq' + str(indice) + '.jpg'
+    archivoDerecho = '../imagenes/der/der' + str(indice) + '.jpg'
     print(archivo)
-    camera.saveImage(arch_c, 100)  # graba la imagen de la camara
-    imag_c = cv2.imread(arch_c)  # imagen que ve el robot
-    cameral.saveImage(arch_l, 100)  # graba la imagen de la camara
-    imag_l = cv2.imread(arch_l)  # imagen que ve el robot
-    camerar.saveImage(arch_r, 100)  # graba la imagen de la camara
-    imag_r = cv2.imread(arch_r)  # imagen que ve el robot
+    camaraCentral.saveImage(archivoCentral, 100)  # graba la imagen de la camara
+    imagenCentral = cv2.imread(archivoCentral)  # imagen que ve el robot
+    camaraIzquierda.saveImage(archivoIzquierdo, 100)  # graba la imagen de la camara
+    imagenIzquierda = cv2.imread(archivoIzquierdo)  # imagen que ve el robot
+    camaraDerecha.saveImage(archivoDerecho, 100)  # graba la imagen de la camara
+    imagenDerecha = cv2.imread(archivoDerecho)  # imagen que ve el robot
     # indice = indice + 1
     posX = int(gps.getValues()[0] * 100)
     posZ = int(gps.getValues()[2] * 100)
@@ -348,7 +346,7 @@ def checkVic():
     for i in range(0, 42, 1):
         # print(i)
         resultado = cv2.matchTemplate(
-            imag_c, ref_c[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+            imagenCentral, ref_c[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
         cam_im = ref_c[i].getCamara()
@@ -360,7 +358,7 @@ def checkVic():
 
     for i in range(0, 42, 1):
         resultado = cv2.matchTemplate(
-            imag_l, ref_l[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+            imagenIzquierda, ref_l[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
         cam_im = ref_l[i].getCamara()
@@ -372,7 +370,7 @@ def checkVic():
 
     for i in range(0, 42, 1):
         resultado = cv2.matchTemplate(
-            imag_r, ref_r[i].getImagen(), cv2.TM_CCOEFF_NORMED)
+            imagenDerecha, ref_r[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
         cam_im = ref_r[i].getCamara()
@@ -389,8 +387,8 @@ def checkVic():
         dat_victima.setCamara(cam_im)
         dat_victima.setTipo(tip_im)
         dat_victima.setValor(max_im)
-        dat_victima.setPosx(posX)
-        dat_victima.setPosz(posZ)
+        dat_victima.setPosX(posX)
+        dat_victima.setPosZ(posZ)
     return max_im
 
 
@@ -404,8 +402,8 @@ def report():
         # print("Termina espera...")
         # victimType = bytes('H', "utf-8")
         victimType = bytes(enc_victima, "utf-8")
-        posX = dat_victima.getPosx()
-        posZ = dat_victima.getPosz()
+        posX = dat_victima.getPosX()
+        posZ = dat_victima.getPosZ()
         message = struct.pack("i i c", posX, posZ, victimType)
         print(message)
         emitter.send(message)
@@ -415,8 +413,8 @@ def report():
         enc_victima = ""
         tipo_victima = ""
         dat_victima.setCamara("")
-        dat_victima.setPosx(0)
-        dat_victima.setPosz(0)
+        dat_victima.setPosX(0)
+        dat_victima.setPosZ(0)
         dat_victima.setTipo("")
         dat_victima.setValor(0)
     else:
@@ -438,8 +436,8 @@ def leer_camaras():
             enc_victima = ""
             tipo_victima = ""
             dat_victima.setCamara("")
-            dat_victima.setPosx(0)
-            dat_victima.setPosz(0)
+            dat_victima.setPosX(0)
+            dat_victima.setPosZ(0)
             dat_victima.setTipo("")
             dat_victima.setValor(0)
     else:
@@ -642,6 +640,48 @@ def paro():
     rueda_rif.setVelocity(0)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # sigue de frente
 def adelante():
     global inercia
@@ -730,7 +770,6 @@ def giro_u():
     global inercia_ant
     global count
     global sigue
-    global termina
     global ts
     ts = 140
     inercia = "U"
@@ -784,6 +823,7 @@ def alinear_derecha():
     # print("alinear a la derecha")
     rueda_rdf.setVelocity(speed_ordynary * -1)
     rueda_rif.setVelocity(speed_ordynary)
+
 
 
 def ajustar():

@@ -62,10 +62,10 @@ vi = [] # Vector de inercias
 lectse=25
 
 muros     = 180 # Distancia a los muros para tomar la pared
-frente    = 100 # Distancia al frente para tomar la pared
+frente    =  60 # Distancia al frente para tomar la pared
 lejos     = 250 # Distancia en la que los sensores no pueden sentrarse
 mas_lejos = 800 # Distancia maxima en la que los sonsores detectan algo
-media     = 60  # Distancia ideal de la pared izquierda
+media     =  60 # Distancia ideal de la pared izquierda
 
 pantano   = 1   # Multiplicador por pantano
 
@@ -73,9 +73,6 @@ sigue = 0
 
 # Definir los movimientos
 paso = 0
-count_der = 35
-count_izq = 35
-count_fte = 80
 inicio = 1  # Pasos iniciales para que no se vaya al pozo
 
 # Victimas visuales

@@ -92,7 +92,7 @@ def generate_robot_proto(robot_json):
 
         # Hard coded, so if ranges change in the website,
         # I need to change them here too :(
-        if(robot_json[component]["name"] == "Wheel"):
+        if (robot_json[component]["name"] == "Wheel"):
             x = clamp(robot_json[component]['x'], -370, 370) / 10000
             y = clamp(robot_json[component]['y'], -100, 370) / 10000
             z = clamp(robot_json[component]['z'], -260, 260) / 10000
@@ -103,7 +103,7 @@ def generate_robot_proto(robot_json):
 
         y += 18.5/1000
 
-        if(robot_json[component]["name"] == "Wheel"):
+        if (robot_json[component]["name"] == "Wheel"):
             proto_code += f"""
             Transform {{
             translation {x} {y} {z}
@@ -244,7 +244,7 @@ def generate_robot_proto(robot_json):
             
             """
 
-        if(robot_json[component]["name"] == "Camera"):
+        if (robot_json[component]["name"] == "Camera"):
             proto_code += f"""
             Transform {{
             translation {x} {y} {z}
@@ -321,7 +321,7 @@ def generate_robot_proto(robot_json):
             }}
             """
 
-        if(robot_json[component]["name"] == "Colour sensor"):
+        if (robot_json[component]["name"] == "Colour sensor"):
             proto_code += f"""
             Transform {{
             translation {x} {y} {z}
@@ -377,7 +377,7 @@ def generate_robot_proto(robot_json):
             }}
             """
 
-        if(robot_json[component]["name"] == "Accelerometer"):
+        if (robot_json[component]["name"] == "Accelerometer"):
             proto_code += f"""
             Transform {{
             translation {x} {y} {z}
@@ -395,7 +395,7 @@ def generate_robot_proto(robot_json):
             ]
             }}"""
 
-        if(robot_json[component]["name"] == "Lidar"):
+        if (robot_json[component]["name"] == "Lidar"):
             proto_code += f"""
             Transform {{
             translation {x} {y} {z}

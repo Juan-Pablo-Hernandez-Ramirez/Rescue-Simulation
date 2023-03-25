@@ -628,7 +628,7 @@ ROBOT_0: {str(self.robot0Obj.name)}
             if self.config.automatic_camera and self.camera.wb_viewpoint_node:
                 nearVictims = [h for h in (self.victimManager.humans + self.victimManager.hazards) if h.checkPosition(self.robot0Obj.position, 0.20) and h.onSameSide(self.robot0Obj.position)]
                 if len(nearVictims) > 0:
-                    if(len(nearVictims) > 1):
+                    if (len(nearVictims) > 1):
                         # Sort by closest
                         nearVictims.sort(key=lambda v: v.getDistance(self.robot0Obj.position))
                     side = nearVictims[0].getSide()

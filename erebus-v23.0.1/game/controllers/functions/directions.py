@@ -20,68 +20,67 @@ def adelante():
         # y id es correcto seguimos de frente normal
         ruedaDerecha.setVelocity(speed_ordynary)
         ruedaIzquierda.setVelocity(speed_ordynary)
-        # print("sin ajuste")
-    elif (diferencia < 50):
-        ruedaDerecha.setVelocity(speed_ordynary)
-        ruedaIzquierda.setVelocity(speed_max)
-        # print("ajuste a la derecha")
-    elif (diferencia > 70):
-        ruedaDerecha.setVelocity(speed_max)
-        ruedaIzquierda.setVelocity(speed_ordynary)
-        # print("ajuste a la izquierda")
+        print("sin ajuste")
+
+    # Se alinea el robot si deteca paredes cercanas
+    elif (d_delanteraIzquierda < 100 or d_centralizquierda < 100):
+        print("me estoy alineando")
+
+        if (diferencia < 50):
+            ruedaDerecha.setVelocity(speed_ordynary)
+            ruedaIzquierda.setVelocity(speed_max)
+            # print("ajuste a la derecha")
+        elif (diferencia > 70):
+            ruedaDerecha.setVelocity(speed_max)
+            ruedaIzquierda.setVelocity(speed_ordynary)
+            # print("ajuste a la izquierda")
 
 
 def salir():
-    global inercia
-    global count
+    global inercia, count
     # print("salir ------", count)
     ruedaDerecha.setVelocity(speed_ordynary)
     ruedaIzquierda.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
+    count += (1 / pantano)
 
 
 def entrar_izq():
-    global inercia
-    global count
+    global inercia, count
     inercia = 'ez'
     # print("Terminar de salir ------", count)
     ruedaDerecha.setVelocity(speed_ordynary)
     ruedaIzquierda.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
+    count += (1 / pantano)
 
 
 def entrar_der():
-    global inercia
-    global count
+    global inercia, count
     inercia = 'ed'
     # print("Terminar de salir ------", count)
     ruedaDerecha.setVelocity(speed_ordynary)
     ruedaIzquierda.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
+    count += (1 / pantano)
 
 
 def term_salir():
-    global inercia
-    global count
+    global inercia, count
     inercia = 'TS'
-    # print("Terminar de salir ------", count)
+    print("Terminar de salir ------", count)
     ruedaDerecha.setVelocity(speed_ordynary)
     ruedaIzquierda.setVelocity(speed_ordynary)
-    count = count + (1 / pantano)
+    count += (1 / pantano)
 
 
 def izquierda():
-    global count
-    global inercia
+    global count, inercia
     inercia = 'I'
     ruedaDerecha.setVelocity(speed_ordynary)
     ruedaIzquierda.setVelocity(speed_ordynary * -1)
-    count = count + (1 / pantano)
+    count += (1 / pantano)
 
 
 def derecha():
-    global count
-    global inercia
+    global count, inercia
     inercia = 'D'
     ruedaDerecha.setVelocity(speed_ordynary * -1)
     ruedaIzquierda.setVelocity(speed_ordynary)
@@ -90,15 +89,10 @@ def derecha():
 
 # vuelta a la derecha
 def giro_u():
-    global inercia
-    global inercia_ant
-    global count
-    global sigue
-    global termina
-    global ts
+    global inercia, inercia_ant, count, sigue, ts
     ts = 140
     inercia = "U"
-    count = count + (1 / pantano)
+    count += (1 / pantano)
     if (count <= tg):
         print("Inicia el Giro ", count, "tg ", tg)
         ruedaDerecha.setVelocity(speed_ordynary)
@@ -119,19 +113,15 @@ def giro_u():
 
 
 def sal_trampa():
-    global step_c
-    global inercia
-    global ts
-    global tg
-    global lg
-    global count
+    global step_c, inercia, ts, tg, lg, count
     # Retrocede
     ruedaDerecha.setVelocity(speed_max * -1)
     ruedaIzquierda.setVelocity(speed_max * -1)
     if (inercia != 'R'):
         count = 0
+
     inercia = "R"
-    count = count + (1 / pantano)
+    count += (1 / pantano)
     # print("Sailr de trampa  ", count," Pasos ",step_c)
     if count > 15:
         count = 0
@@ -154,26 +144,38 @@ def ajustar():
     ajustar = False
     if (d_frontalDerecha != 0):
         multiplo = d_frontalIzquierda / d_frontalDerecha
-        if (multiplo < 0.8 and l_frontalIzquierdo == 1 and l_frontalDerecho == 1 and l_centralIzquierdo == 1 and l_delanteroIzquierdo == 1 and l_centralDerecho == 1 and l_delanteroDerecho == 1):
-            # paro()
+        if (
+            multiplo < 0.8
+            and d_frontalIzquierda   > 500
+            and d_frontalDerecha     < 500
+            and l_centralIzquierdo    == 1
+            and l_delanteroIzquierdo  == 1
+            and l_centralDerecho      == 1
+            and l_delanteroDerecho    == 1
+        ):
+            paro()
             print("Estoy pedrido me alineo a la izquierda",multiplo)
             alinear_izquierda()
             ajustar = True
-        elif (multiplo > 1.2 and l_frontalIzquierdo == 1 and l_frontalDerecho == 1 and l_centralIzquierdo == 1 and l_delanteroIzquierdo == 1 and l_centralDerecho == 1 and l_delanteroDerecho == 1):
-            # paro()
+
+        elif(
+            multiplo > 1.2
+            and d_frontalIzquierda   > 500
+            and d_frontalDerecha     < 500
+            and l_centralIzquierdo    == 1
+            and l_delanteroIzquierdo  == 1
+            and l_centralDerecho      == 1
+            and l_delanteroDerecho    == 1
+        ):
+            paro()
             print("Estoy perdido me alineo a la derecha",multiplo)
-            alinear_izquierda()
-            # alinear_derecha()
+            alinear_derecha()
             ajustar = True
     return ajustar
 
 
 def direccion():
-    global inercia
-    global inercia_ant
-    global sigue
-    global step_c
-    global count
+    global inercia, inercia_ant, sigue, step_c, count
     ins = 2
     print("--------------",inercia, "anterior ", inercia_ant)
     print(l_frontalDerecho,l_frontalIzquierdo)
@@ -181,7 +183,11 @@ def direccion():
     if (inercia == 'F'):
         if (ajustar() == False):
             # no hay pared al frente y hay pared a la izquierda
-            if (l_frontalDerecho == 1 and l_frontalIzquierdo == 1 and (l_delanteroIzquierdo == 0 or l_centralIzquierdo == 0)):
+            if (
+                l_frontalDerecho == 1
+                and l_frontalIzquierdo == 1
+                and (l_delanteroIzquierdo == 0 or l_centralIzquierdo == 0)
+            ):
                 adelante()
             elif ((l_frontalDerecho == 0 and l_frontalIzquierdo == 0) and (l_centralDerecho == 1 or l_delanteroDerecho==1)):
                 step_c = 40

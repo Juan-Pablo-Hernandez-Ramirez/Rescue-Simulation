@@ -98,9 +98,7 @@ def checkVic():
         cam_im = referencia_victimas[i].getCamara()
         col_im = referencia_victimas[i].getColor()
 
-
         print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
-
         if (max > max_im and cam_im == "V" and col_im != "B"):
             victimaEncontrada = "CC"
             max_im = max
@@ -111,6 +109,8 @@ def checkVic():
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         cam_im = referencia_victimas[i].getCamara()
         col_im = referencia_victimas[i].getColor()
+        
+        print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
         if (max > max_im and cam_im == "V" and col_im != "B"):
             victimaEncontrada = "CI"
             max_im = max
@@ -121,6 +121,8 @@ def checkVic():
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
         cam_im = referencia_victimas[i].getCamara()
         col_im = referencia_victimas[i].getColor()
+        
+        print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
         if (max > max_im and cam_im == "V" and col_im != "B"):
             victimaEncontrada = "CD"
             max_im = max
@@ -129,8 +131,8 @@ def checkVic():
 
 
         if (victimaEncontrada == "CC"):
-            print("--------------- SE ENTRO A LA CONDICION ---------------")
-            for i in range(0, 20, 1):
+            print("--------------- BUSCANDO EN LA CAMARA CENTRAL ---------------")
+            for i in range(0, 42, 1):
                 # print(i)
                 resultado = cv2.matchTemplate(imagenCentral, referencia_central[i].getImagen(), cv2.TM_CCOEFF_NORMED)
                 min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
@@ -141,13 +143,11 @@ def checkVic():
                     max_im = max
                     tip_im = referencia_central[i].getTipo()
                     cam_enc = "C"
-
-        print("------------ ERROR ------------")
-
+                    
 
         if (victimaEncontrada == "CI"):
-            print("--------------- SE ENTRO A LA CONDICION 2 ---------------")
-            for i in range(0, 20, 1):
+            print("--------------- BUSCANDO EN LA CAMARA IZQUIERDA ---------------")
+            for i in range(0, 42, 1):
                 resultado = cv2.matchTemplate(imagenIzquierda, referencia_izquierda[i].getImagen(), cv2.TM_CCOEFF_NORMED)
                 min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
                 # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
@@ -159,8 +159,8 @@ def checkVic():
                     cam_enc = "L"
 
         elif (victimaEncontrada == "CD"):
-            print("--------------- SE ENTRO A LA CONDICION 3 ---------------")
-            for i in range(0, 20, 1):
+            print("--------------- BUSCANDO EN LA CAMARA DERECHA ---------------")
+            for i in range(0, 42, 1):
                 resultado = cv2.matchTemplate(imagenDerecha, referencia_derecha[i].getImagen(), cv2.TM_CCOEFF_NORMED)
                 min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
                 # print('minimo ', min,' Maximo ', max,'Pos minimo ',pos_min,'Pos maximo ',pos_max)
@@ -173,11 +173,6 @@ def checkVic():
 
         else:
             print("--------------- NO SE ENCONTRO NINGUNA VICTIMA ---------------")
-
-
-
-
-
 
 
 

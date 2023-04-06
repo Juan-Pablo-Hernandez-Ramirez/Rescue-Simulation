@@ -94,40 +94,30 @@ def checkVic():
         # print(i)
         resultado = cv2.matchTemplate(imagenCentral, referencia_victimas[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
-        print(max)
-        cam_im = referencia_victimas[i].getCamara()
-        col_im = referencia_victimas[i].getColor()
+        cam_im = "VC"
 
-        print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
-        if (max > max_im and cam_im == "V" and col_im != "B"):
+        #print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
+        if (max > max_im and cam_im == "VC"):
             victimaEncontrada = "CC"
             max_im = max
-            tip_im = referencia_central[i].getTipo()
-            cam_enc = "C"
 
         resultado = cv2.matchTemplate(imagenIzquierda, referencia_victimas[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
-        cam_im = referencia_victimas[i].getCamara()
-        col_im = referencia_victimas[i].getColor()
+        cam_im = "VI"
         
-        print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
-        if (max > max_im and cam_im == "V" and col_im != "B"):
+        #print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
+        if (max > max_im and cam_im == "VD"):
             victimaEncontrada = "CI"
             max_im = max
-            tip_im = referencia_izquierda[i].getTipo()
-            cam_enc = "L"
 
         resultado = cv2.matchTemplate(imagenDerecha, referencia_victimas[i].getImagen(), cv2.TM_CCOEFF_NORMED)
         min, max, pos_min, pos_max = cv2.minMaxLoc(resultado)
-        cam_im = referencia_victimas[i].getCamara()
-        col_im = referencia_victimas[i].getColor()
+        cam_im = "VD"
         
-        print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
-        if (max > max_im and cam_im == "V" and col_im != "B"):
+        #print("---------- central, max:", max, "max_im:", max_im, "cam_im", cam_im, "col_im", col_im, "----------")
+        if (max > max_im and cam_im == "VD"):
             victimaEncontrada = "CD"
             max_im = max
-            tip_im = referencia_derecha[i].getTipo()
-            cam_enc = "R"
 
 
         if (victimaEncontrada == "CC"):
@@ -231,6 +221,11 @@ def inclinacionesVictim(cam):
     print("entre a la inclinacion", inercia)
 
 
+def encontrarColorvi(ind):
+    if   ind in [0, 1, 2]:
+        colorFondo = "B"
+
+
 def encontrarColor(ind):
 # -------------- H  H, S  S,  U   U,  C   C,  P   P,  F   F,  O,  O  #
     if   ind in [0, 1, 6, 7, 12, 13, 18, 19, 24, 25, 30, 31, 36, 37]:
@@ -255,7 +250,7 @@ for indice in range(0, 3, 1):
     archivo = '../imagenes/victimasDistancia/victima_d' + str(
             indice) + '.jpg'
 
-    image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "V", encontrarColor(indice), archivo)
+    image = imagen_ref(cv2.imread(archivo), encontrar_tipo(indice), "V", encontrarColorvi(indice), archivo)
     referencia_victimas.append(image)  # imagen de referencia
 
 
